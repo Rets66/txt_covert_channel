@@ -1,71 +1,81 @@
 #!/usr/bin/env python3
 
-from argparse import ArgumentParser
 import base64
-from sys import sys.argv
+from sys import argv
 
-from scapy.all import *
-
-
-if sys.argv != 3:
-
-    print("")
-    print("* Usage: python3 main.py argment domain")
-
-    if sys.argv == 2:
-        print("There aren't either text or domain")
-    print("    $ python3 Some_text Auth_dns_server\n")
-    sys.exit(1)
+import dns.resolver
 
 
-def handle_option():
+def check_option():
 
-    # parser = argparse.AugmentParser(description='This tool is ')
-    # parser.add_argment('-f', action=)
-    pass
+    if len(argv) != 3:
+        print("")
+        print("* Usage: python3 main.py argment domain")
+        print("    $ python3 <covert text> Auth_dns_server\n")
+        exit(1)
+
+    else:
+        qname=argv[1]
+        domain=argv[2]
+        return qname, domain
 
 
-def separate(qname, length=10):
+def create_query(qname: str, length: int=10) -> list:
 
     """
     - Encode the augument with base64
     - Separate the encoded character
     """
 
-    encoded_char = base64.b64encode(b'{}'.format(qname))
-    if len(encoded_char) != 10:
-        domain = [encoded_char[i: i+length] for i in range(0, len(encoded_char), length)]
-    else:
-        domain = encoded_char
+    _byte = base64.b64encode(qname.encode())
+    cipher = _byte.decode()
 
-    return domain # domain = {'0asdfasdf9', '0asdfasdf9', '0asdfasdf9')
+    return [cipher[i: i+length] for i in range(0, len(cipher), length)]
 
 
-def query(subdomain):
+def request(subdomain: list) -> list:
 
     """ 
     - Query the contents of TXT record
+    - Handle the value if the value's line is multi
     """
 
-    DOMAIN = sys.argv[2]
-    request = "{0}.{1}".format(subdomain, DOMAIN)
-
     answer = []
-    for a in domain:
-        answer = send(IP(_)/UDP(dport=53)/DNS(qd=DNSQR(qname=request, qtype=txt))
-        answer.append()
+    for _ in subdomain:
+        domain = "{0}.{1}".format(_, DOMAIN)
+        res = dns.resolver.query(domain, 'TXT')
+        for i in res:
+            if _ in i:
+                verification
+
+        answer.append(res)
 
     return answer
 
-def parse():
-    
+def decipher(answer: list) -> str:
 
+    """
+    - Gather the TXT query's domain authentication value
+    - Extract the value of domain verification
+    - Decode the strings when the string is decode by base64
+    """
 
-def main(argv):
+    # answer = "MS=ms89446546"
+    #          "v=spf1 ip4:163.221.0.0/16 ip6:2001:200:16a::/48 ~all"
 
-    QNAME = sys.argv[1]
-    query(separate(QNAME))
+    subdomain = [str(i).split('=')[1] for i in answer]
+    subdomain = [i.strip(DOMAIN) for i in answer]
+    value = [base64.b64decode(i.decode()) for i in _subdomain]
+
+    pass
+
+def main(qname: str) -> str:
+
+    query = create_query(qname)
+    answer = request(query)
+    print(answer)
 
 
 if __name__ == '__main__':
-    main()
+    QNAME, DOMAIN = check_option()
+    main(QNAME)
