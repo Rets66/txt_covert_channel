@@ -60,9 +60,6 @@ def decipher(answer: list) -> str:
     - Decode the strings when the string is decode by base64
     """
 
-    # answer = "MS=ms89446546"
-    #          "v=spf1 ip4:163.221.0.0/16 ip6:2001:200:16a::/48 ~all"
-
     subdomain = [str(i).split('=')[1] for i in answer]
     subdomain = [i.strip(DOMAIN) for i in answer]
     value = [base64.b64decode(i.decode()) for i in _subdomain]
