@@ -15,8 +15,8 @@ def check_option():
         exit(1)
 
     else:
-        message=argv[1]
-        domain=argv[2]
+        message = argv[1]
+        domain = argv[2]
         return message, domain
 
 
