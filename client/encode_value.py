@@ -5,7 +5,7 @@ from sys import argv
 
 import dns.resolver
 
-def init():
+def print_usage():
     if len(argv) != 2:
         print("Usage:\n")
         print("    $ python3 encode_value.py <name server>")
@@ -21,8 +21,7 @@ def query(dst):
             print('No verication')
             exit()
         else:
-            
-
+            pass
 
     except:
         exit(1)
@@ -30,5 +29,5 @@ def query(dst):
 
 
 if __name__ == '__main__':
-    target_host = init()
+    target_host = print_usage()
     main()
