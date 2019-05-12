@@ -11,25 +11,18 @@ def check_option():
     if len(argv) != 3:
         print("")
         print("* Usage: python3 main.py argment domain")
-        print("    $ python3 <covert text> Auth_dns_server\n")
+        print("    $ python3 <covert message> <authentication_dns server>\n")
         exit(1)
 
     else:
-        qname=argv[1]
+        message=argv[1]
         domain=argv[2]
-        return qname, domain
+        return message, domain
 
 
-def create_query(qname: str, length: int=10) -> list:
+def create_query(message: str, length: int=10) -> list:
 
-    """
-    - Encode the augument with base64
-    - Separate the encoded character
-    """
-
-    _byte = base64.b64encode(qname.encode())
-    cipher = _byte.decode()
-
+    cipher = base64.b64encode(message.encode()).decode()
     return [cipher[i: i+length] for i in range(0, len(cipher), length)]
 
 
@@ -40,14 +33,12 @@ def request(subdomain: list) -> list:
     - Handle the value if the value's line is multi
     """
 
-    answer = []
     for _ in subdomain:
+        value = []
         domain = "{0}.{1}".format(_, DOMAIN)
-        res = dns.resolver.query(domain, 'TXT')
-        for i in res:
-            if _ in i:
-                verification
+        response = list(dns.resolver.query(domain, 'TXT'))
 
+        pass
         answer.append(res)
 
     return answer
@@ -74,5 +65,5 @@ def main(qname: str) -> str:
 
 
 if __name__ == '__main__':
-    QNAME, DOMAIN = check_option()
-    main(QNAME)
+    message, domain = check_option()
+    main(message)
