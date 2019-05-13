@@ -16,43 +16,51 @@ def print_usage():
         return argv[1]
 
 
-def catch_verification(dst: str):
+def catch_verification(dst: str) -> list:
 
     try:
-        answer = dns.resolver.query(dst, "TXT")
-        verification_line = [str(i).strip('"') for i in answer[:] if 'verification' in str(i)]
-        if len(verification) = 0:
-            print('No verication')
-            exit()
-        else:
-            to_dict(verification_line)
+        response = dns.resolver.query(dst, "TXT")
+        verification_line = [str(i).strip('"') for i in response[:] if 'verification' in str(i)]
+
+        return velification_line
+
     except:
         exit(1)
 
 
-def to_dict(line):
+def to_dict(line: list) -> dict:
 
-    """
-    Task
-    - How to deal with it If the value can't decode to base64
-    """
+    response = {}
+    for i in line:
+        key_value = i.sprit('=')
+        if key_value[0] in response.keys():
+            key_value = key_value[0] + len(response.keys())
+            response[key_value] = key_value[1]
+        else:
+            response[key_value[0]] = key_value[1]
 
-    answer = {}
-    for _ in line:
-        key_value = _.sprit('=')
-        try:
-            if key_value[0] in answer.keys():
-                key_value = key_value[0] + len(answer.keys())
-                answer[key_value] = b64decode(key_value[1])
-            else:
-                answer[key_value[0]] = b64decode(key_value[1])
-        except:
-            exit()
+    return response
 
-def decode_value(content):
+
+def decode_value(answer: dict) -> dict:
+
+    for key, value in answer.items():
+        value = base64.b64decode(value.encode()).decode()
+        answer[key] = value
+
+    return answer
 
 
 if __name__ == '__main__':
     target_host = print_usage()
-    answer = query(dst)
+    verification_line = catch_verification(target_host)
+
+    if len(verification_line) = 0:
+        print('No verificaion')
+        exit()
+    else:
+        response = to_dict(verification_line)
+
+    answer = decode_value(response)
     pprint.pprint(answer)
+
