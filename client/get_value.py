@@ -21,23 +21,26 @@ def catch_verification(dst: str) -> list:
         response = dns.resolver.query(dst, "TXT")
         verification_line = [str(i).strip('"') for i in response[:] if 'verification' in str(i)]
 
-        return velification_line
+        return verification_line
 
     except:
         print("")
-        print("[Error] : Can't find the verification value\n")
+        print("[No record] : This domain looks no verification value.\n")
         exit(1)
 
 
 def to_dict(line: list) -> dict:
     response = {}
     for i in line:
-        key_value = i.sprit('=')
-        if key_value[0] in response.keys():
-            key_value = key_value[0] + len(response.keys())
-            response[key_value] = key_value[1]
+        _ = str(i).strip("'[]").split("=")
+        key = _[0]
+        value = _[1]
+
+        if key in response.keys():
+            key = key + len(reponse.keys())
+            response[key] = value
         else:
-            response[key_value[0]] = key_value[1]
+            response[key] = value
 
     return response
 
@@ -49,6 +52,7 @@ def decode_value(answer: dict) -> dict:
             answer[key] = value
 
         return answer
+
     except:
         print("")
         print("Can't decode the value file\n")
@@ -60,7 +64,8 @@ if __name__ == '__main__':
     verification_line = catch_verification(target_host)
 
     if len(verification_line) == 0:
-        print('No verificaion')
+        print('')
+        print('No verificaion\n')
         exit()
     else:
         response = to_dict(verification_line)
