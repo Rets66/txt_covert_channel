@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import dns.zone
 import socketserver
 
 PORT=9999
@@ -12,14 +13,10 @@ RTYPE_MX=15
 RTYPE_TXT=16
 RTYPE_AAAA=28
 
-
 class EventHandler(socketserver.BaseRequestHandler):
     """
     - Listen
-    - Extract text file
     - Encode text
-    - Add prefix
-    - Input TXT the text
     """
 
     def __init__(self):
@@ -29,7 +26,7 @@ class EventHandler(socketserver.BaseRequestHandler):
         data = self.request[0].strip()
         socket = self.request[1]
 
-class CreateContent():
+class CreateZone():
     """
     - Extract a line from command.txt
     - Encode the line by some encoding methods such as Base64, etc
@@ -38,6 +35,7 @@ class CreateContent():
 
     def __init__(self):
         pass
+    zone = dns.zone.from_text()
 
     def get_file():
         pass
