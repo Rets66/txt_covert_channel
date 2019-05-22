@@ -4,21 +4,17 @@ from base64 import b64decode
 import pprint
 from sys import argv
 
-import dns.resolver
+from dnslib.dns import DNSRecord, DNSHeader, DNSError, QTYPE, EDNS0
 
+def catch_verification(QNAME: str) -> list:
 
-def print_usage():
-    if len(argv) != 2:
-        print("Usage:\n")
-        print("    $ python3 encode_value.py <name server>")
-        exit(1)
-    else:
-        return argv[1]
+    """Create and send dns query packet"""
 
-
-def catch_verification(dst: str) -> list:
     try:
-        response = dns.resolver.query(dst, "TXT")
+        query_packet = DNSRecord.question(QNAME)
+        response = query_packet.send(cache_resolver)
+        assert str(resp.get_a().rdata) == LOCALADDR
+
         verification_line = [str(i).strip('"') for i in response[:] if 'verification' in str(i)]
 
         return verification_line
@@ -59,9 +55,21 @@ def decode_value(answer: dict) -> dict:
         exit(1)
 
 
+class MessageError(Exception):
+    def __init__(self):
+        print("Can't "
+
+
 if __name__ == '__main__':
-    target_host = print_usage()
-    verification_line = catch_verification(target_host)
+
+    if len(argv) != 2:
+        print("Usage:\n")
+        print("    $ python3 encode_value.py <name server>")
+        exit(1)
+    else:
+        HOST = argv[1]
+
+    verification_line = catch_verification(HOST)
 
     if len(verification_line) == 0:
         print('')
