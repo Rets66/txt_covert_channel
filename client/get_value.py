@@ -6,6 +6,7 @@ from sys import argv
 
 from dnslib.dns import DNSRecord, DNSHeader, DNSError, QTYPE, EDNS0
 
+
 def catch_verification(QNAME: str) -> list:
 
     """Create and send dns query packet"""
