@@ -1,10 +1,17 @@
 #!/usr/bin/env python3
 
+import argparse
 import base64
 from sys import argv
 
 import dns.resolver
 
+
+def help(argv):
+
+# Global veriable
+www=1
+mail=0
 
 def check_option():
 
@@ -65,5 +72,16 @@ def main(qname: str) -> str:
 
 
 if __name__ == '__main__':
+
+    # Control the argument
+    parser = argparse.ArgumentParser(description="The manual of options and the way to use:")
+    parser.add_argument('-d', help="Define the type of decode", metavar='decode')
+    parser.add_argument('-i', help="Define the interval time of request packet",
+                        metavar='interval')
+    args = parser.parse_args()
+    decode = args.decode
+    interval = args.interval
+
+    # Payload
     message, domain = check_option()
     main(message)
