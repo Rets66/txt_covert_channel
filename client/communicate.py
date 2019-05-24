@@ -10,6 +10,12 @@ import dns.resolver
 SUBDOMAIN={1:'www', 0:'mail'}
 
 
+def query(qname: str) -> list:
+    response = dns.resolver.query(qname, 'TXT')
+    verification_line = [str(i).split('=') for i in response[:]\
+                        if 'verification' in str(i)]
+    return verificaion_line
+
 def create_qname(message: str, length: int=10) -> list:
 
     cipher = base64.b64encode(message.encode()).decode()
