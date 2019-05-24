@@ -7,27 +7,9 @@ from sys import argv
 import dns.resolver
 
 
-def help(argv):
+SUBDOMAIN={1:'www', 0:'mail'}
 
-# Global veriable
-www=1
-mail=0
-
-def check_option():
-
-    if len(argv) != 3:
-        print("")
-        print("* Usage: python3 main.py argment domain")
-        print("    $ python3 <covert message> <authentication_dns server>\n")
-        exit(1)
-
-    else:
-        message = argv[1]
-        domain = argv[2]
-        return message, domain
-
-
-def create_query(message: str, length: int=10) -> list:
+def create_qname(message: str, length: int=10) -> list:
 
     cipher = base64.b64encode(message.encode()).decode()
     return [cipher[i: i+length] for i in range(0, len(cipher), length)]
@@ -73,15 +55,22 @@ def main(qname: str) -> str:
 
 if __name__ == '__main__':
 
-    # Control the argument
-    parser = argparse.ArgumentParser(description="The manual of options and the way to use:")
-    parser.add_argument('-d', help="Define the type of decode", metavar='decode')
-    parser.add_argument('-i', help="Define the interval time of request packet",
-                        metavar='interval')
-    args = parser.parse_args()
-    decode = args.decode
-    interval = args.interval
+    parser = argparse.ArgumentParser(
+            usage='communicate.py [-h] qname [-d(decode_type) | -i(interval) | -s(subdomain)]', description="Get the value of domain verification")
+    # Required argment
+    parser.add_argument('qname', help="The target url of research")
+    # Optional argment
+    parser.add_argument('-d', "--decode_type", help="Define the type of decode", action="store_true")
+    parser.add_argument('-i', "--interval", help="Define the interval time of request packet", action="store_true")
+    parser.add_argument('-s', '--subdomain', help='Define the value of subdomain', action="store_true")
 
-    # Payload
-    message, domain = check_option()
-    main(message)
+    args = parser.parse_args()
+    QNAME = args.qname
+    if args.decode_type:
+        decode = args.decode_type
+    if args.interval:
+        interval = args.interval
+    if args.subdomain:
+        SUBDOMAIN = args.subdomain
+
+
