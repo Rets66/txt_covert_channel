@@ -9,6 +9,7 @@ import dns.resolver
 
 SUBDOMAIN={1:'www', 0:'mail'}
 
+
 def create_qname(message: str, length: int=10) -> list:
 
     cipher = base64.b64encode(message.encode()).decode()
@@ -56,21 +57,26 @@ def main(qname: str) -> str:
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
-            usage='communicate.py [-h] qname [-d(decode_type) | -i(interval) | -s(subdomain)]', description="Get the value of domain verification")
-    # Required argment
-    parser.add_argument('qname', help="The target url of research")
-    # Optional argment
-    parser.add_argument('-d', "--decode_type", help="Define the type of decode", action="store_true")
-    parser.add_argument('-i', "--interval", help="Define the interval time of request packet", action="store_true")
-    parser.add_argument('-s', '--subdomain', help='Define the value of subdomain', action="store_true")
+                    usage='communicate.py [-h] [-s(specific) | -r(random)]'\
+                          '[-d(decode_type) |-i(interval)]',\
+                    description='Get the value of domain verification')
+    parser.add_argument('-s', '--specific', help='specific domain', \
+                        action='store_true')
+    parser.add_argument('-r', '--random', help='use randomly generated domain', \
+                        action='store_true')
+    parser.add_argument('-d', '--decode_type', help='difine the type of decode', \
+                        action='store_true')
+    parser.add_argument('-i', '--interval', help='difine the interval time of \
+                        request packet', action='store_true')
 
     args = parser.parse_args()
-    QNAME = args.qname
+    if args.specific:
+        domain = args.domain
+        # call function
+    if args.random:
+        # call randomly generate query
+        pass
     if args.decode_type:
         decode = args.decode_type
     if args.interval:
         interval = args.interval
-    if args.subdomain:
-        SUBDOMAIN = args.subdomain
-
-
