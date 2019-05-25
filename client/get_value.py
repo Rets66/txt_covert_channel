@@ -10,7 +10,6 @@ import dns.resolver
 SUBDOMAIN=['www', 'mail']
 
 def catch_verification(qname: str) -> list:
-
     response = dns.resolver.query(qname, 'TXT')
     verification_line = [str(i).strip('"') for i in response[:] \
                          if 'verification' in str(i)]
@@ -26,7 +25,6 @@ def catch_verification(qname: str) -> list:
 
 
 if __name__ == '__main__':
-
     parser = argparse.ArgumentParser(usage='get_value.py <URL>')
     parser.add_argument('url')
     args = parser.parse_args()
@@ -34,3 +32,4 @@ if __name__ == '__main__':
     qname = args.url
     verification_line = catch_verification(qname)
     pprint.pprint(verification_line)
+
