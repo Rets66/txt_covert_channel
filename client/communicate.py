@@ -31,34 +31,28 @@ import dns.resolver
 
 def control_argment():
     parser = argparse.ArgumentParser(
-                    usage='communicate.py [-h] [-s(specify) <hostname>|-d(DGA)]'\
-                          '[-i(interval {s}) <60>] [-m(message]',\
+                    usage='communicate.py hostname[e.g. google.com] [-h] '\
+                          '[-m(message] [-i(interval {s}) <e.g. 60>]',\
                     description='Get the value of domain verification')
-    parser.add_argument('-s', '--specify', help='specify the target host', \
-                        action='store_true')
-    parser.add_argument('-d', '--dga', help='use domain genelation algrorithm', \
-                        action='store_true')
+    parser.add_argument('domain', help='specify the target domain')
+    parser.add_argument('-m', '--message', help='define the message as subdomain')
     parser.add_argument('-i', '--interval', help='difine the interval time of \
-                        request packet', action='store_true')
-    parser.add_argument('-m', '--message', help='define the message as subdomain',\
-                        action='store_true')
+                        request packet')
+    #parser.add_argument('-dga', '--dga', help='use domain genelation algrorithm', \
+                        #action='store_true')
 
 
     args = parser.parse_args()
 
     res = {}
-    if args.specify:
-        domain = args.domain
-        res['domain'] = domain
-    if args.dga:
-        # call DGA function
-        pass
-    if args.interval:
-        interval = args.interval
-        return 
+    res['domain'] = args.domain
     if args.message:
-        message = args.message
-        res['subdomain'] = message
+        res['subdomain'] = args.message
+    if args.interval:
+        res['interval'] =args.interval 
+    #if args.dga:
+        # call DGA function
+    #    pass
     return res
 
 
@@ -103,7 +97,7 @@ def decipher(answer: list) ->str:
 
 def main():
     argment = control_argment()
-    print(argment[:])
+    print(argment.items())
 
     # Based on the artment, execute the functions
 
