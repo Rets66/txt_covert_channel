@@ -25,11 +25,14 @@ def catch_verification(qname: str) -> list:
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(usage='get_value.py <URL>')
-    parser.add_argument('url')
+    parser = argparse.ArgumentParser(
+                                    usage='get_value.py <hostname>',\
+                                    description="This is functioning like 'dig -t"\
+                                    " TXT <hostname>' +short | grep 'verification'")
+    parser.add_argument('hostname')
     args = parser.parse_args()
 
-    qname = args.url
+    qname = args.hostname
     verification_line = catch_verification(qname)
     pprint.pprint(verification_line)
 

