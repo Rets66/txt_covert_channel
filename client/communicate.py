@@ -24,8 +24,8 @@ import dns.resolver
 ##   * your auth server embeds the size and the number of packet in TXT RR
 ## - 'www'  : request the message in TXT RR
 # <Definition of veriable>
-## - ex) www.google.com
-## - domain : 'google.com'
+## - ex) www.example.com
+## - domain : 'example.com'
 ## - subdomain(message) : 'www'
 ## - message : outbound. from client to server
 ## - answer  : inbound. from server to client
