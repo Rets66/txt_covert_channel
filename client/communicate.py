@@ -39,7 +39,8 @@ def control_argment():
                                 'paclets. Then you select "query" as message, it starts.')
     parser.add_argument('domain', help='specify the target domain')
     parser.add_argument('-m', '--message', help='define the message as subdomain '\
-                        'www : just exfiltrateing''mail : count how mang required messages')
+                        'www : just exfiltrateing'\
+                        'mail : count how mang required messages')
     parser.add_argument('-i', '--interval', help='difine the interval time of \
                         request packet', default=3600)
     parser.add_argument('-f', '--file', help='extract contents in the file')
