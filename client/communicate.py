@@ -30,7 +30,7 @@ import dns.resolver
 ## - message : outbound. from client to server
 ## - answer  : inbound. from server to client
 
-def control_argment():
+def control_argment() -> list:
     parser = argparse.ArgumentParser(
                     usage='communicate.py hostname[e.g. example.com] [-h] '\
                           '[-m[message] [-i(interval {s}) <e.g. 60>]'\
