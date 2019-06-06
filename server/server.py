@@ -1,14 +1,26 @@
 #!/usr/bin/env python3
 
+import argparse
 import socketserver
-from dnslib.dns import DNSRecord
-from dnslib.server import DNSServer, DNSHandler, DNSResolver
+import dns.resolver
+import dns.zone
 
-"""
-- Listen at ramdom port
-- Parse the queries
-- Get the subdomain
-"""
+# This program is  for  Authentication DNS Server
+# Listen 53 port(require root authetication)
+# calcurate how many packet estimated, and set into A's last octet
+
+
+
+
+def control_argment():
+    parser = argparse.ArgumentParser(usage='', description='')
+    parser.add_argument()
+
+    args = parser.parse_args()
+    argment = {}
+
+    return argment
+
 
 def handle():
     resolver = BaseResolver()
@@ -39,6 +51,8 @@ class CreateZone():
 
 
 if __name__ == '__main__':
+    argment = control_argment()
+
     host, port = 'localhost', 9999
     with socketserver.UDPServer((host, port), EventHandler) as server:
         server.serve_forever()
