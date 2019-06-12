@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 
 import argparse
+import socket
 import socketserver
 import dns.resolver
 import dns.zone
 
-# This program is  for  Authentication DNS Server
+# This program is for Authentication DNS Server
 # Listen 53 port(require root authetication)
 # calcurate how many packet estimated, and set into A's last octet
-
-
 
 
 def control_argment():
@@ -21,12 +20,21 @@ def control_argment():
 
     return argment
 
+class Handler(socketserver.DatagramRequestHandler):
+    """
+    """
 
-def handle():
-    resolver = BaseResolver()
+    def __init__(self):
+        pass
+
+    def handle(self):
+        data = self.request[0].strip()
+        socket = self.request[1]
+        socket(sendto(data.upper(), self.client_address)
 
 
-class CreateZone():
+
+class ZoneModifier():
     """
     - Extract a line from command.txt
     - Encode the line by some encoding methods such as Base64, etc
@@ -50,9 +58,13 @@ class CreateZone():
         answer_packet.add_answer(RR(QNAME, QTYPE, rdata=A()ttl=5)
 
 
-if __name__ == '__main__':
+def main():
     argment = control_argment()
 
-    host, port = 'localhost', 9999
-    with socketserver.UDPServer((host, port), EventHandler) as server:
+    address = ('127.0.0.1', 53)
+
+    with socketserver.UDPServer(address, Handler) as server:
         server.serve_forever()
+
+    
+if __name__ == '__main__':
